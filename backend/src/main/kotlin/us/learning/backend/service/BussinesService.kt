@@ -8,6 +8,10 @@ import us.learning.backend.repository.CustomerDao
 
 @Service
 class BussinesService(@Autowired private val repository : CustomerDao) {
+
+    fun searchByStateOfAddress(search: String) : List<Customer> {
+        return repository.numberOfCustomerByState(search)
+    }
     fun findAllCustomers(): List<Customer> {
         if(repository.findAll().size == 0) {
             dbSetup()
@@ -18,11 +22,11 @@ class BussinesService(@Autowired private val repository : CustomerDao) {
         return repository.save(customer)
     }
     private fun dbSetup(){
-        repository.save(Customer(firstName = "Jimmy", lastName = "Kans"))
+        repository.save(Customer(firstName = "Jim", lastName = "Kans"))
         repository.save(Customer(firstName = "Juan", lastName = "Perez"))
-        val newCustomer = Customer(firstName = "Sandy", lastName = "Lnad")
+        val newCustomer = Customer(firstName = "Sandy", lastName = "Lora")
         newCustomer.addNote(Note("Good Customer"))
-        newCustomer.addNote(Note("Pay on time"))
+        newCustomer.addNote(Note("Pay on Time"))
         newCustomer.email = "myaddress@test.com"
         repository.save(newCustomer)
     }

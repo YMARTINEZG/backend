@@ -11,6 +11,13 @@ import javax.transaction.Transactional
 @RequestMapping(value = ["/api/customer"])
 @Transactional
 class CustomerController(private val customerService: BussinesService) {
+
+    @GetMapping("/{state}")
+    fun get(@PathVariable("state") query: String): List<CustomerDTO> {
+        val customers: List<Customer> = customerService.searchByStateOfAddress(query)
+        return customers.map(::CustomerDTO)
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@Validated @RequestBody command: CustomerCommandDTO): CustomerDTO {
