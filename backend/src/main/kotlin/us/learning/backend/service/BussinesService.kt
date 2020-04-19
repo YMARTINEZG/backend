@@ -8,13 +8,14 @@ import us.learning.backend.repository.CustomerDao
 
 @Service
 class BussinesService(@Autowired private val repository : CustomerDao) {
-
-
     fun findAllCustomers(): List<Customer> {
         if(repository.findAll().size == 0) {
             dbSetup()
         }
         return repository.findAll()
+    }
+    fun saveCustomer(customer: Customer): Customer {
+        return repository.save(customer)
     }
     private fun dbSetup(){
         repository.save(Customer(firstName = "Jimmy", lastName = "Kans"))
