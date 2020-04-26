@@ -11,13 +11,11 @@ import javax.transaction.Transactional
 @RequestMapping(value = ["/api/customer"])
 @Transactional
 class CustomerController(private val customerService: BussinesService) {
-
     @GetMapping("/{state}")
     fun get(@PathVariable("state") query: String): List<CustomerDTO> {
         val customers: List<Customer> = customerService.searchByStateOfAddress(query)
         return customers.map(::CustomerDTO)
     }
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@Validated @RequestBody command: CustomerCommandDTO): CustomerDTO {
@@ -34,7 +32,7 @@ class CustomerController(private val customerService: BussinesService) {
             firstName = command.firstName
             lastName = command.lastName
             handleAddress(this, command)
-            customer.email = if (command.lastName != null) command.email?.takeIf { it.isNotBlank() } else null
+            customer.email = if (command.streetName != null) command.email?.takeIf { it.isNotBlank() } else null
         }
     }
     fun Customer.transformToCustomerDTO() = CustomerDTO(

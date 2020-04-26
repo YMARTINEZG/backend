@@ -6,7 +6,7 @@ import javax.validation.constraints.Email
 import javax.validation.constraints.NotEmpty
 
 private const val CUSTOMER_GENERATOR = "CustomerGenerator"
-@Entity(name="customers")
+@Entity
 class Customer {
     @Id
     @SequenceGenerator(name = CUSTOMER_GENERATOR, sequenceName = "CUSTOMER_SEQ", initialValue = 1000, allocationSize = 1)
@@ -19,7 +19,8 @@ class Customer {
     var address: String? = null
     @Email
     var email: String? = null
-    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
+
+    @OneToMany(fetch = FetchType.LAZY,cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinTable(
             name = "customer_note",
             joinColumns = [JoinColumn(name = "customer_id")],
@@ -27,19 +28,24 @@ class Customer {
     )
     private val notes: MutableSet<Note> = HashSet()
     constructor()
-    constructor(firstName: String, lastName: String) {
+    constructor(id: Long) {
+        this.id = id
+    }
+    constructor(id:Long,firstName: String, lastName: String) {
+        this.id = id
         this.firstName = firstName
         this.lastName = lastName
     }
     fun getNotes(): Set<Note> {
         return Collections.unmodifiableSet(notes)
     }
-
     fun addNote(note: Note) {
         this.notes.add(note)
     }
-
     fun removeNote(note: Note) {
         this.notes.remove(note)
+    }
+    override fun toString(): String {
+        return "Customer(id=$id, firstName='$firstName', lastName='$lastName', address=$address, email=$email)"
     }
 }

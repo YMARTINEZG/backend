@@ -6,7 +6,7 @@ import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 private const val NOTE_GENERATOR = "NoteGenerator"
 
-@Entity(name="notes")
+@Entity
 class Note {
     @Id
     @SequenceGenerator(name = NOTE_GENERATOR, sequenceName = "NOTE_SEQ", initialValue = 1000, allocationSize = 1)

@@ -1,4 +1,6 @@
 package us.learning.backend.web.note
 
-class NoteDTO {
-}
+data class NoteDTO(
+        val customerId : Long,
+        val noteText : String
+)
