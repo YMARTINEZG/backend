@@ -27,6 +27,10 @@ class Customer {
             inverseJoinColumns = [JoinColumn(name = "note_id")]
     )
     private val notes: MutableSet<Note> = HashSet()
+
+    @OneToMany(mappedBy = "customer", cascade = [CascadeType.ALL], orphanRemoval = true)
+    private val incomes: MutableSet<Income> = HashSet()
+
     constructor()
     constructor(id: Long) {
         this.id = id
@@ -45,6 +49,19 @@ class Customer {
     fun removeNote(note: Note) {
         this.notes.remove(note)
     }
+    fun addIncome(income: Income) {
+        income.customer = this
+        this.incomes.add(income)
+    }
+
+    fun removeIncome(income: Income) {
+        this.incomes.remove(income)
+    }
+
+    fun getIncomes(): Set<Income> {
+        return Collections.unmodifiableSet(incomes)
+    }
+
     override fun toString(): String {
         return "Customer(id=$id, firstName='$firstName', lastName='$lastName', address=$address, email=$email)"
     }

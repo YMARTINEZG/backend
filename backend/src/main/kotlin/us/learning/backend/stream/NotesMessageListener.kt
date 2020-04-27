@@ -10,7 +10,7 @@ import us.learning.backend.service.ProcessorService
 import us.learning.backend.web.customer.CustomerDTO
 import us.learning.backend.web.note.NoteDTO
 @EnableBinding(Sink::class)
-class ProcessorMessageListener(val processorService : ProcessorService) {
+class NotesMessageListener(val processorService : ProcessorService) {
     companion object {
         private val logger = LogManager.getLogger()
     }

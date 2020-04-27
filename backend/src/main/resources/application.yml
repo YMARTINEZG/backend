@@ -6,3 +6,8 @@ spring:
       bindings:
         input:
           group: queue.notes
+        income:
+          destination: testIncome
+        profile:
+          destination: testIncome
+          group: customerProfile
