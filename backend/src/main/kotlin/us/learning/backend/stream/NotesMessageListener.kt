@@ -1,16 +1,13 @@
 package us.learning.backend.stream
 
 import org.apache.logging.log4j.LogManager
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.cloud.stream.messaging.Sink
-import org.springframework.integration.support.MessageBuilder
-import us.learning.backend.service.ProcessorService
-import us.learning.backend.web.customer.CustomerDTO
+import us.learning.backend.service.CustomerService
 import us.learning.backend.web.note.NoteDTO
 @EnableBinding(Sink::class)
-class NotesMessageListener(val processorService : ProcessorService) {
+class NotesMessageListener(val customerService : CustomerService) {
     companion object {
         private val logger = LogManager.getLogger()
     }
@@ -20,7 +17,7 @@ class NotesMessageListener(val processorService : ProcessorService) {
     )
     @StreamListener(Sink.INPUT)
     fun handle(note : NoteCustomer) {
-        val customer = processorService.handleCustomerMessage(NoteDTO(customerId= note.customerId.toLong(),noteText = note.text ))
+        val customer = customerService.handleCustomerMessage(NoteDTO(customerId= note.customerId.toLong(),noteText = note.text ))
         logger.info(customer.toString())
     }
 }

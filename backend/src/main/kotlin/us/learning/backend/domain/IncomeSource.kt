@@ -32,8 +32,10 @@ class IncomeSource {
 
     constructor()
 
-    constructor(id: Long) {
+    constructor(id: Long, name: String) {
         this.id = id
+        this.name = name
+        this.maxMonthlyAmount = BigDecimal.valueOf(0.0)
     }
 
 }

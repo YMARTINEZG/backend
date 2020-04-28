@@ -7,15 +7,16 @@ import org.springframework.integration.support.MessageBuilder
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import us.learning.backend.domain.Customer
-import us.learning.backend.service.BussinesService
+import us.learning.backend.dto.IncomeDTO
+import us.learning.backend.service.CustomerService
 import us.learning.backend.stream.CustomProcessor
-import us.learning.backend.stream.NotesMessageListener
+import java.util.*
 import javax.transaction.Transactional
 
 @RestController
 @RequestMapping(value = ["/api/customer"])
 @Transactional
-class CustomerController(private val customerService: BussinesService) {
+class CustomerController(private val customerService: CustomerService) {
     companion object {
         private val logger = LogManager.getLogger()
     }
@@ -39,8 +40,10 @@ class CustomerController(private val customerService: BussinesService) {
     }
 
     @PostMapping("/income")
-    fun publishMessageToIncome(@Validated @RequestBody customer: CustomerIdentityDTO) {
-        customProcessor.income().send(MessageBuilder.withPayload(customer).setHeader("x-correlativeId", "252626262").build())
+    fun publishMessageToIncome(@RequestBody income: IncomeDTO) {
+        val customer = customerService.addCustomerIncome(income)
+        val trxId = UUID.randomUUID().toString()
+        customProcessor.income().send(MessageBuilder.withPayload(CustomerIdentityDTO(id=customer.id!!, firstName = customer.firstName, lastName = customer.lastName)).setHeader("x-correlativeId", trxId).build())
         logger.info(customer.toString())
     }
     private fun transformCommandToCustomer(command: CustomerCommandDTO, customer: Customer) {

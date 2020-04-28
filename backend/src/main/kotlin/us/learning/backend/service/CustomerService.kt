@@ -1,18 +1,25 @@
 package us.learning.backend.service
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import us.learning.backend.domain.Customer
+import us.learning.backend.domain.Income
+import us.learning.backend.domain.IncomeSource
 import us.learning.backend.domain.Note
-import org.springframework.beans.factory.annotation.Autowired
 import us.learning.backend.dto.CustomerCommandDTO
+import us.learning.backend.dto.IncomeDTO
 import us.learning.backend.exception.NotFoundException
 import us.learning.backend.repository.CustomerDao
+import us.learning.backend.repository.IncomeDao
+import us.learning.backend.repository.IncomeSourceDao
+import us.learning.backend.web.note.NoteDTO
 import javax.transaction.Transactional
 
 @Service
 @Transactional
-class BussinesService(@Autowired private val repository : CustomerDao) {
-
+class CustomerService(@Autowired private val repository : CustomerDao,
+                      @Autowired private val incomeRepo : IncomeDao,
+                      @Autowired private val incomeSourceRepo : IncomeSourceDao) {
     fun searchByStateOfAddress(search: String) : List<Customer> {
         return repository.numberOfCustomerByState(search)
     }
@@ -47,5 +54,28 @@ class BussinesService(@Autowired private val repository : CustomerDao) {
             firstName = command.firstName
             lastName = command.lastName
         }
+    }
+    fun handleCustomerMessage(noteDTO: NoteDTO) : Customer {
+        val customer = repository.findByIdOrNull(noteDTO.customerId) ?: throw NotFoundException()
+        val note = Note()
+        note.text = noteDTO.noteText
+        customer.addNote(note)
+        repository.flush()
+        return customer
+    }
+    fun addCustomerIncome(incomeDto: IncomeDTO) : Customer {
+        val customer = repository.findByIdOrNull(incomeDto.customerId) ?: throw NotFoundException()
+        val source = incomeSourceRepo.findByName(incomeDto.source.name)
+                ?: incomeSourceRepo.save(IncomeSource(id=0, name= incomeDto.source.name))
+
+        val income = Income()
+        income.source = source
+        income.monthlyAmount = incomeDto.amount
+        income.customer = customer
+
+        val newIncome = incomeRepo.save(income)
+        customer.addIncome(newIncome)
+        repository.flush()
+        return customer
     }
 }
